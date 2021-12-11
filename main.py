@@ -9,10 +9,11 @@ class Main(QWidget):
 	
 	def __init__(self):
 		super().__init__()
-		self.a = 1
+		self.mod = 1
+		self.text = ""
 		
 		self.setWindowTitle("ECHODER")
-		self.setGeometry(250,250,700,800)
+		self.setGeometry(250,50,700,900)
 		self.setFixedSize(700,800)
 		
 		self.VLay1 = QVBoxLayout()
@@ -20,29 +21,36 @@ class Main(QWidget):
 		self.HLay2 = QHBoxLayout()
 		
 		self.textbox1 = QPlainTextEdit()
+		self.textbox1.setFixedSize(675, 200)
 		
 		self.keytxt1 = QLineEdit()
 		self.keytxt2 = QLineEdit()
+		self.fileName = QLineEdit()
+		self.fileName.setText(("File Name: "))
 		self.keytxt1.setText("key 1:  ")
 		self.keytxt2.setText("key 2: ")
 		
-		self.keytxt1.setFixedSize(300,40)
-		self.keytxt2.setFixedSize(300,40)
+		self.keytxt1.setFixedSize(250,40)
+		self.keytxt2.setFixedSize(250,40)
+		self.fileName.setFixedSize(675,40)
 		
 		self.translate = QPushButton(text = "Translate")
 		self.copy = QPushButton(text = "Copy Text")
-		self.save = QPushButton(text = "Save Text(coming soon)")
+		self.save = QPushButton(text = "Save Text")
 		self.change = QPushButton(text = "Encryption")
+		self.opnfile = QPushButton(text = "Open File")
 		
 		self.translate.clicked.connect(self.encryption)
 		self.change.clicked.connect(self.changef)
 		self.copy.clicked.connect(self.copyf)
+		self.save.clicked.connect(self.savef)
+		self.opnfile.clicked.connect(self.openfile)
 		
 		self.translate.setFixedSize(675,50)
 		self.change.setFixedSize(675,50)
 		self.copy.setFixedSize(300,50)
 		self.save.setFixedSize(300,50)
-		
+		self.opnfile.setFixedSize(150, 40)
 		
 		self.head= QLabel("ECHODER")
 		self.head.setAlignment(QtCore.Qt.AlignCenter)
@@ -56,11 +64,9 @@ class Main(QWidget):
 		self.txt2.setAlignment(QtCore.Qt.AlignCenter)
 		self.txt2.setObjectName("txt2")
 		
-		self.textbox2 = QLabel()
-		self.textbox2.setAlignment(QtCore.Qt.AlignCenter)
-		self.textbox2.setFixedSize(675,200)
-		self.textbox2.setObjectName("cryption")
+		self.textbox2 = QPlainTextEdit()
 	
+		self.HLay1.addWidget(self.opnfile)
 		self.HLay1.addWidget(self.keytxt1)
 		self.HLay1.addWidget(self.keytxt2)
 		
@@ -75,6 +81,7 @@ class Main(QWidget):
 		self.VLay1.addWidget(self.change)
 		self.VLay1.addWidget(self.txt2)
 		self.VLay1.addWidget(self.textbox2)
+		self.VLay1.addWidget(self.fileName)
 		self.VLay1.addLayout(self.HLay2)
 		
 		self.setLayout(self.VLay1)
@@ -83,7 +90,7 @@ class Main(QWidget):
 		
 	def encryption(self):
 		
-		if self.a == 1:
+		if self.mod == 1:
 			self.text = self.textbox1.toPlainText()
 			self.key1 = self.keytxt1.text()
 			self.key2 = self.keytxt2.text()
@@ -98,20 +105,9 @@ class Main(QWidget):
 				pass
 				
 			self.text = echode.encryp(self.text,self.key1,self.key2)
-			self.index = 0
-			self.text2 = ""
-			
-			for i in self.text:
-				self.index += 1
-				if self.index%40 == 0:
-					self.text2 += "\n"
-					self.text2 += i
-					
-				else:
-					self.text2 += i
 				
-			self.textbox2.setText(self.text2)
-			
+			self.textbox2.setPlainText(self.text)
+	
 		else:
 			self.decryption()
 		
@@ -130,32 +126,19 @@ class Main(QWidget):
 			pass
 				
 		self.text = echode.decryp(self.text,self.key1,self.key2)
-		
-		self.index = 0
-		self.text2 = ""
 			
-		for i in self.text:
-			self.index += 1
-				
-			if self.index%40 == 0:
-				self.text2 += "\n"
-				self.text2 += i
-					
-			else:
-				self.text2 += i
-				
-		self.textbox2.setText(self.text)
+		self.textbox2.setPlainText(self.text)
 		
 	def changef(self):
-		if self.a == 1:
-			self.a = 0
+		if self.mod == 1:
+			self.mod = 0
 			
 			self.txt1.setText("Encryption Text")
 			self.txt2.setText("Decryption Text")
 			self.change.setText("Decryption")
 			
 		else:
-			self.a = 1
+			self.mod = 1
 			
 			self.txt1.setText("Text")
 			self.txt2.setText("Encryption Text")
@@ -165,9 +148,26 @@ class Main(QWidget):
 		clipboard.copy(self.text)
 		
 	def savef(self):
-		pass
+		self.fileurl = QFileDialog.getExistingDirectory(os.getenv("Desktop"))
+		self.fileNameText = self.fileName.text().replace("File Name: ", "")
 		
+		if self.fileNameText == "":
+			self.fileNameText = "cryption text.txt"
 
+		self.file = open(self.fileurl + "//"+self.fileNameText+".txt","w")
+		self.file.write(self.text)
+		self.file.close()
+
+	def openfile(self):
+		self.fileurl = QFileDialog.getOpenFileName(os.getenv("Desktop"))
+		self.filetext = ""
+
+		for line in open(self.fileurl[0], 'r'):
+			self.filetext += line
+
+		self.textbox1.setPlainText(self.filetext)
+
+		
 if __name__ == '__main__':
 	app = QApplication(sys.argv)
 	style = """
@@ -239,6 +239,7 @@ if __name__ == '__main__':
 	border-radius: 15px;
 	border: 2px solid black;	
 	}
+
 	"""
 	app.setStyleSheet(style)
 	app2 = Main()
