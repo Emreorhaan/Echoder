@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import *
 from PyQt5 import QtCore
+from PyQt5 import QtGui
 from echode import *
 import clipboard
 import sys
@@ -14,75 +15,84 @@ class Main(QWidget):
 		
 		self.setWindowTitle("ECHODER")
 		self.setGeometry(250,50,700,900)
-		self.setFixedSize(700,800)
+		self.setFixedSize(700,900)
+
+		self.modeText = QLabel(text = "Mode: ")
+		self.inputLabel = QLabel(text = "Input Text: ")
+		self.outputLabel = QLabel(text = "Translated Text: ")
 		
+		self.modeText.setFixedHeight(35)
+		self.inputLabel.setFixedHeight(25)
+		self.outputLabel.setFixedHeight(25)
+		
+		self.inputLabel.setObjectName("L1")
+		self.outputLabel.setObjectName("L2")
+
+		self.mode1 = QPushButton(text = "Encryp")
+		self.mode2 = QPushButton(text = "Decryp")
+		self.translate = QPushButton(text = "Translate")
+		self.openButton = QPushButton()
+		self.copyButton = QPushButton()
+		self.saveButton = QPushButton()
+
+		self.mode1.clicked.connect(self.enmode)
+		self.mode2.clicked.connect(self.demode)
+		self.translate.clicked.connect(self.encryption)
+		self.openButton.clicked.connect(self.openfile)
+		self.saveButton.clicked.connect(self.savef)
+		self.copyButton.clicked.connect(self.copyf)
+
+
+		self.mode1.setFixedSize(192, 62)
+		self.mode2.setFixedSize(192, 62)
+		self.translate.setFixedHeight(62)
+		self.openButton.setFixedSize(62, 62)
+		self.saveButton.setFixedSize(40, 40)
+
+		self.openButton.setIcon(QtGui.QIcon("folder_black_24dp.svg"))
+		self.copyButton.setIcon(QtGui.QIcon("content_copy_black_24dp.svg"))
+		self.saveButton.setIcon(QtGui.QIcon("save_black_24dp.svg"))
+
+		self.textData = QPlainTextEdit()
+		self.cryptionData = QPlainTextEdit()
+
+		self.textData.setFixedSize(665, 272)
+		self.cryptionData.setFixedSize(665, 272)
+
+		self.key1 = QLineEdit(text = "Key 1:")
+		self.key2 = QLineEdit(text = "Key 2:")
+		self.fileName = QLineEdit(text = "File Name:")
+
+		self.key1.setFixedSize(192, 62)
+		self.key2.setFixedSize(192, 62)
+		self.fileName.setFixedHeight(40)
+
 		self.VLay1 = QVBoxLayout()
 		self.HLay1 = QHBoxLayout()
 		self.HLay2 = QHBoxLayout()
-		
-		self.textbox1 = QPlainTextEdit()
-		self.textbox1.setFixedSize(675, 200)
-		
-		self.keytxt1 = QLineEdit()
-		self.keytxt2 = QLineEdit()
-		self.fileName = QLineEdit()
-		self.fileName.setText(("File Name: "))
-		self.keytxt1.setText("key 1:  ")
-		self.keytxt2.setText("key 2: ")
-		
-		self.keytxt1.setFixedSize(250,40)
-		self.keytxt2.setFixedSize(250,40)
-		self.fileName.setFixedSize(675,40)
-		
-		self.translate = QPushButton(text = "Translate")
-		self.copy = QPushButton(text = "Copy Text")
-		self.save = QPushButton(text = "Save Text")
-		self.change = QPushButton(text = "Encryption")
-		self.opnfile = QPushButton(text = "Open File")
-		
-		self.translate.clicked.connect(self.encryption)
-		self.change.clicked.connect(self.changef)
-		self.copy.clicked.connect(self.copyf)
-		self.save.clicked.connect(self.savef)
-		self.opnfile.clicked.connect(self.openfile)
-		
-		self.translate.setFixedSize(675,50)
-		self.change.setFixedSize(675,50)
-		self.copy.setFixedSize(300,50)
-		self.save.setFixedSize(300,50)
-		self.opnfile.setFixedSize(150, 40)
-		
-		self.head= QLabel("ECHODER")
-		self.head.setAlignment(QtCore.Qt.AlignCenter)
-		self.head.setObjectName("head")
+		self.HLay3 = QHBoxLayout()
 
-		self.txt1 = QLabel("Text")
-		self.txt1.setAlignment(QtCore.Qt.AlignCenter)
-		self.txt1.setObjectName("txt1")
+		self.HLay1.addWidget(self.mode1)
+		self.HLay1.addWidget(self.mode2)
+		self.HLay1.addStretch()
+		self.HLay1.addWidget(self.openButton)
+
+		self.HLay2.addWidget(self.key1)
+		self.HLay2.addWidget(self.key2)
+		self.HLay2.addWidget(self.translate)
+
+		self.HLay3.addWidget(self.fileName)
+		self.HLay3.addWidget(self.saveButton)
 		
-		self.txt2 = QLabel("Encryption Text")
-		self.txt2.setAlignment(QtCore.Qt.AlignCenter)
-		self.txt2.setObjectName("txt2")
-		
-		self.textbox2 = QPlainTextEdit()
-	
-		self.HLay1.addWidget(self.opnfile)
-		self.HLay1.addWidget(self.keytxt1)
-		self.HLay1.addWidget(self.keytxt2)
-		
-		self.HLay2.addWidget(self.copy)
-		self.HLay2.addWidget(self.save)
-		
-		self.VLay1.addWidget(self.head)
-		self.VLay1.addWidget(self.txt1)
-		self.VLay1.addWidget(self.textbox1)
+		self.VLay1.addWidget(self.modeText)
 		self.VLay1.addLayout(self.HLay1)
-		self.VLay1.addWidget(self.translate)
-		self.VLay1.addWidget(self.change)
-		self.VLay1.addWidget(self.txt2)
-		self.VLay1.addWidget(self.textbox2)
-		self.VLay1.addWidget(self.fileName)
+		self.VLay1.addWidget(self.inputLabel)
+		self.VLay1.addWidget(self.textData)
 		self.VLay1.addLayout(self.HLay2)
+		self.VLay1.addWidget(self.outputLabel)
+		self.VLay1.addWidget(self.cryptionData)
+		self.VLay1.addWidget(self.copyButton)
+		self.VLay1.addLayout(self.HLay3)
 		
 		self.setLayout(self.VLay1)
 		
@@ -91,61 +101,51 @@ class Main(QWidget):
 	def encryption(self):
 		
 		if self.mod == 1:
-			self.text = self.textbox1.toPlainText()
-			self.key1 = self.keytxt1.text()
-			self.key2 = self.keytxt2.text()
-			self.key1 = self.key1.replace("key 1: ","")
-			self.key2 = self.key2.replace("key 2: ","")
+			self.text = self.textData.toPlainText()
+			self.key1t = self.key1.text()
+			self.key2t = self.key2.text()
+			self.key1t = self.key1t.replace("Key 1:","")
+			self.key2t = self.key2t.replace("Key 2:","")
 			
 			try:
-				self.key1 = int(self.key1)
-				self.key2 = int(self.key2)
+				self.key1t = int(self.key1t)
+				self.key2t = int(self.key2t)
 				
 			except:
 				pass
-				
-			self.text = echode.encryp(self.text,self.key1,self.key2)
-				
-			self.textbox2.setPlainText(self.text)
+
+			self.text = echode.encryp(self.text,self.key1t,self.key2t)
+			self.cryptionData.setPlainText(self.text)
 	
 		else:
 			self.decryption()
 		
 	def decryption(self):
-		self.text = self.textbox1.toPlainText()
-		self.key1 = self.keytxt1.text()
-		self.key2 = self.keytxt2.text()
-		self.key1 = self.key1.replace("key 1: ","")
-		self.key2 = self.key2.replace("key 2: ","")
+		self.text = self.textData.toPlainText()
+		self.key1t = self.key1.text()
+		self.key2t = self.key2.text()
+		self.key1t = self.key1t.replace("Key 1:","")
+		self.key2t = self.key2t.replace("Key 2:","")
 			
 		try:
-			self.key1 = int(self.key1)
-			self.key2 = int(self.key2)
+			self.key1t = int(self.key1t)
+			self.key2t = int(self.key2t)
 				
 		except:
 			pass
 				
-		self.text = echode.decryp(self.text,self.key1,self.key2)
+		self.text = echode.decryp(self.text,self.key1t,self.key2t)
 			
-		self.textbox2.setPlainText(self.text)
+		self.cryptionData.setPlainText(self.text)
 		
-	def changef(self):
-		if self.mod == 1:
-			self.mod = 0
-			
-			self.txt1.setText("Encryption Text")
-			self.txt2.setText("Decryption Text")
-			self.change.setText("Decryption")
-			
-		else:
-			self.mod = 1
-			
-			self.txt1.setText("Text")
-			self.txt2.setText("Encryption Text")
-			self.change.setText("Encryption")
+	def enmode(self):
+		self.mod = 1
+	
+	def demode(self):
+		self.mod = 0
 		
 	def copyf(self):
-		clipboard.copy(self.text)
+		clipboard.copy(self.cryptionData.toPlainText())
 		
 	def savef(self):
 		self.fileurl = QFileDialog.getExistingDirectory(os.getenv("Desktop"))
@@ -155,7 +155,7 @@ class Main(QWidget):
 			self.fileNameText = "cryption text.txt"
 
 		self.file = open(self.fileurl + "//"+self.fileNameText+".txt","w")
-		self.file.write(self.text)
+		self.file.write(self.cryptionData.toPlainText())
 		self.file.close()
 
 	def openfile(self):
@@ -165,87 +165,67 @@ class Main(QWidget):
 		for line in open(self.fileurl[0], 'r'):
 			self.filetext += line
 
-		self.textbox1.setPlainText(self.filetext)
+		self.textData.setPlainText(self.filetext)
 
 		
 if __name__ == '__main__':
 	app = QApplication(sys.argv)
 	style = """
-	QLabel#head
-	{
-	background: #FFFFFF;
-	font-size: 15pt;
-	color: #000000;
-	border-radius: 15px;
-	border: 2px solid black;
-	}
-	
-	QLabel#txt1,#txt2
-	{
-	font-size: 15pt;
-	color: #FFFFFF;
-	}
-	
+
 	QLabel
 	{
-	color: #FFFFFF;
-	font-size: 18pt;
+	color: rgba(255,255,255,255);
+	font: 20pt 'Segoe UI';
+	font-weight:700;
 	}
-	
-	QLabel#cryption
+
+	QLabel#L1,#L2
 	{
-	background: #FFFFFF;
-	color: #000000;
-	border-radius: 10px;
-	font-size: 20px;
-	border: 2px solid black;
+	color: rgba(255,255,255,255);
+	font: 10pt 'Segoe UI';
+	font-weight:700;
 	}
 	
 	QWidget
 	{
-	background: qlineargradient( x1:0 y1:0, x2:1 y2:0, stop:0 #8300FF, stop:1 #850066);
+	background: qlineargradient( x0:1 y0:1, x1:1 y2:1, stop:0 #BAC8E0 , stop:1 #6A85B6 );
 	}
 	
 	QPlainTextEdit
 	{
-	background: #FFFFFF;
-	color: #000000;
+	background: rgba(255,255,255,60);
+	color: #FFFFFF;
 	border-radius: 15px;
-	font-size: 20px;
-	border: 2px solid black;
+	font: 10pt 'Segoe UI';
+	font-weight:700;
 	}
 	
 	QLineEdit
 	{
-	background: #FFFFFF;
-	color: #000000;
-	font-size: 15px;
+	background: rgba(255,255,255,60);
+	color: #FFFFFF;
 	border-radius: 15px;
-	border: 2px solid black;
+	font: 10pt 'Segoe UI';
+	font-weight:700;
 	}
 	
 	QPushButton
 	{
-	background: #FFFFFF;
-	color: #000000;
+	background: rgba(255,255,255,60);
+	color: rgba(255,255,255,255);
 	border-radius: 15px;
-	border: 2px solid black;
+	icon-size: 30px;
+	font: 17pt 'Segoe UI';
+	font-weight:700;
 	}
+
 
 	QPushButton::hover
 	{
-	background: #B117A0;
-	color: #000000;
-	border-radius: 15px;
-	border: 2px solid black;	
+		background: rgba(255,255,255,80);
 	}
-
 	"""
 	app.setStyleSheet(style)
 	app2 = Main()
 	sys.exit(app.exec_())
 	
-	
-
-
-

@@ -38,9 +38,3 @@ class echode:
 			output += " "
 
 		return output
-		
-		
-
-			
-		
-	
