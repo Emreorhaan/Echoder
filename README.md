@@ -1,7 +1,7 @@
 # Echoder
 linear encryption software programmed with python
 
-![gui](https://github.com/emre44orhan/Echoder/blob/main/images/gui.png)
+![gui](https://github.com/emre44orhan/Echoder/blob/main/images/gui_v2.png)
 
 ## How does it work?
 
